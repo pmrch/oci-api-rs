@@ -1,0 +1,37 @@
+[package]
+name = "oci-api-rs"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "oci_api_rs"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = { version = "1.0.102", default-features = false }
+base64 = { version = "0.22.1", default-features = false }
+compact_str = { version = "0.9.1", default-features = false, features = ["serde", "std"] }
+derive_builder = { version = "0.20.2", default-features = false, features = ["alloc"] }
+dotenv = { version = "0.15.0", default-features = false }
+http = { version = "1.4.1", default-features = false }
+reqsign = { version = "0.20.0", default-features = false, features = [
+    "oracle",
+] }
+reqsign-core = { version = "3.0.0", default-features = false }
+reqsign-file-read-tokio = "3.0.0"
+reqsign-http-send-reqwest = "4.0.0"
+reqwest = { version = "0.13.4", default-features = false, features = [
+    "rustls",
+    "json",
+] }
+rsa = { version = "0.9.10", default-features = false, features = ["sha2"] }
+serde = { version = "1.0.228", default-features = false, features = ["derive"] }
+serde_json = { version = "1.0.150", default-features = false, features = [
+    "std",
+] }
+thiserror = "2.0.18"
+tokio = { version = "1.52.3", default-features = false, features = [
+    "rt-multi-thread",
+    "macros",
+] }
+tracing = { version = "0.1.44", default-features = false, features = ["std"] }
