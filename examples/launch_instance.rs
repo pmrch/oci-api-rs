@@ -11,7 +11,7 @@ const AVAILABILITY_DOMAIN: &str = "fZvm:EU-FRANKFURT-1-AD-1";
 #[tokio::main]
 async fn main() -> Result<()> {
     let (ctx, creds) = setup_credentials_from_env().await?;
-    let secrets: Secrets = Secrets::from_env()?;
+    let secrets: Secrets = Secrets::from_env(None)?;
 
     let client: Client = Client::new();
     let details: InstanceDetails = InstanceDetailsBuilder::default()

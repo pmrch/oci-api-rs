@@ -1,3 +1,4 @@
+use std::collections::{HashMap, HashSet};
 use std::env::var;
 use std::fmt::Display;
 
@@ -10,6 +11,7 @@ pub struct Secrets {
     image_id:  CompactString,
     subnet_id: CompactString,
     ssh_key:   CompactString,
+    extra:     Option<HashMap<CompactString, CompactString>>,
 }
 
 impl Display for Secrets {
@@ -72,16 +74,26 @@ impl Secrets {
     /// # Errors
     /// - `.env` file exists but cannot be parsed
     /// - Any of `IMAGE_OCID`, `SUBNET_OCID`, or `SSH_PUBLIC_KEY` are missing
-    pub fn from_env() -> anyhow::Result<Self> {
+    pub fn from_env(extra_keys: Option<HashSet<CompactString>>) -> anyhow::Result<Self> {
         dotenv::dotenv()?;
         let image_id: String = var("IMAGE_OCID")?;
         let subnet_id: String = var("SUBNET_OCID")?;
         let ssh_key: String = var("SSH_PUBLIC_KEY")?;
 
+        let mut map: HashMap<CompactString, CompactString> = HashMap::new();
+        if let Some(extra_keys) = extra_keys {
+            for key in extra_keys {
+                if let Ok(value) = var(&key) {
+                    map.insert(key, CompactString::from(value));
+                }
+            }
+        }
+
         Ok(Self {
             image_id:  CompactString::from(image_id),
             subnet_id: CompactString::from(subnet_id),
             ssh_key:   CompactString::from(ssh_key),
+            extra:     Some(map),
         })
     }
 
@@ -96,4 +108,7 @@ impl Secrets {
 
     #[must_use]
     pub fn ssh_key(&self) -> &str { self.ssh_key.as_str() }
+
+    #[must_use]
+    pub const fn get_extra(&self) -> Option<&HashMap<CompactString, CompactString>> { self.extra.as_ref() }
 }
