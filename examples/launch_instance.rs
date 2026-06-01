@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
     let secrets: Secrets = Secrets::from_env()?;
 
     let client: Client = Client::new();
-    let launch_details: InstanceDetails = InstanceDetailsBuilder::default()
+    let details: InstanceDetails = InstanceDetailsBuilder::default()
         .availability_domain(AVAILABILITY_DOMAIN)
         .compartment_id(&creds.tenancy)
         .display_name("ampere-instance")
@@ -28,8 +28,7 @@ async fn main() -> Result<()> {
         .availability_config(AvailabilityConfig::restore())
         .build()?;
 
-    let launch_details: Vec<u8> = serde_json::to_vec(&launch_details)?;
-    let req: Request = create_signed_request(&ctx, launch_details, &creds, REGION).await?;
+    let req: Request = create_signed_request(&ctx, &details, &creds, REGION).await?;
     let response: Response = client.execute(req).await?;
 
     println!("{}", response.status());

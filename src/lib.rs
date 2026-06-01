@@ -4,6 +4,7 @@ pub mod prelude;
 mod secrets;
 pub mod signer;
 
+pub use builders::instance::InstanceDetails;
 use prelude::Result;
 use prelude::http::{Method, Request};
 use prelude::import_traits::ProvideCredential;
@@ -51,8 +52,9 @@ pub async fn setup_credentials_from_env() -> Result<(Context, Credential)> {
 ///
 /// # Errors
 /// - JSON serialization, request construction, signing, or reqwest conversion fails
-pub async fn create_signed_request(ctx: &Context, launch_details: Vec<u8>, creds: &Credential, region: &str) -> Result<RRequest> {
+pub async fn create_signed_request(ctx: &Context, details: &InstanceDetails, creds: &Credential, region: &str) -> Result<RRequest> {
     let url: compact_str::CompactString = compact_str::format_compact!("https://iaas.{region}.oraclecloud.com/20160918/instances");
+    let launch_details: Vec<u8> = serde_json::to_vec(details)?;
     let req: Request<Vec<u8>> = Request::builder()
         .method(Method::POST)
         .uri(url.as_str())
